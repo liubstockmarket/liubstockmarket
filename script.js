@@ -3,11 +3,11 @@
 const settings = {
 	"async": true,
 	"crossDomain": true,
-	"url": "https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY&symbol=MSFT&outputsize=compact&datatype=json",
+	"url": "https://yahoo-finance15.p.rapidapi.com/api/yahoo/qu/quote/AAPL/insider-transactions",
 	"method": "GET",
 	"headers": {
 		"X-RapidAPI-Key": "8dac42bdd2msh379cce62947963ep14d497jsn911506204ebc",
-		"X-RapidAPI-Host": "alpha-vantage.p.rapidapi.com"
+		"X-RapidAPI-Host": "yahoo-finance15.p.rapidapi.com"
 	}
 };
 
