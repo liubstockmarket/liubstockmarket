@@ -14,15 +14,16 @@ const settings = {
 $.ajax(settings).done(function (response) {
 	const titlesOfTab = ["Data", "Value", "Name", "Entlty", "Role", "Shares", "Max Price"];
     createTab(titlesOfTab, response.insiderTransactions.transactions);
+    cheateStatistic(3, 5, 5)
 });
 
 // Show statistic
 
-window.onload = function () {
+const cheateStatistic = (line1, line2, line3) => {
     var options = {
         animationEnabled: true,
         title: {
-            text: "Mobile Phones Used For",                
+            text: "Insider Trading Volume",                
             fontColor: "Peru"
         },	
         axisY: {
@@ -39,7 +40,7 @@ window.onload = function () {
             labelFontColor: "Peru"				
         },
         data: [{
-            indexLabelFontSize: 26,
+            indexLabelFontSize: 20,
             toolTipContent: "<span style=\"color:#62C9C3\">{indexLabel}:</span> <span style=\"color:#CD853F\"><strong>{y}</strong></span>",
             indexLabelPlacement: "inside",
             indexLabelFontColor: "white",
@@ -48,21 +49,15 @@ window.onload = function () {
             color: "#62C9C3",
             type: "bar",
             dataPoints: [
-                { y: 21, label: "21%", indexLabel: "Video" },
-                { y: 25, label: "25%", indexLabel: "Dining" },
-                { y: 33, label: "33%", indexLabel: "Entertainment" },
-                { y: 36, label: "36%", indexLabel: "News" },
-                { y: 42, label: "42%", indexLabel: "Music" },
-                { y: 49, label: "49%", indexLabel: "Social Networking" },
-                { y: 50, label: "50%", indexLabel: "Maps/ Search" },
-                { y: 55, label: "55%", indexLabel: "Weather" },
-                { y: 61, label: "61%", indexLabel: "Games" }
+                { y: line1, label: "0-3", indexLabel: "months" },
+                { y: line2, label: "3-6", indexLabel: "months" },
+                { y: line3, label: "6-12", indexLabel: "months" },
             ]
         }]
     };
     
     $("#chartContainer").CanvasJSChart(options);
-    }
+}
 
 // Tabs 
 
@@ -82,7 +77,6 @@ const createTab = (headData, bodyData) => {
         
     // create tab body
     $.each(bodyData, function(index, data) {
-        console.log(data);
         const newRow = $(`<tr>${data.filerName}</tr>`);
         $("<td></td>").html(data.startDate.fmt).appendTo(newRow);
         $("<td></td>").html(data.value ? data.value.longFmt : "Haven`t info").appendTo(newRow);
