@@ -3,16 +3,17 @@
 const settings = {
 	"async": true,
 	"crossDomain": true,
-	"url": "https://yahoo-finance15.p.rapidapi.com/api/yahoo/qu/quote/AAPL/insider-transactions",
+	"url": "https://yh-finance.p.rapidapi.com/stock/v2/get-insider-transactions?symbol=AMRN&region=US",
 	"method": "GET",
 	"headers": {
 		"X-RapidAPI-Key": "8dac42bdd2msh379cce62947963ep14d497jsn911506204ebc",
-		"X-RapidAPI-Host": "yahoo-finance15.p.rapidapi.com"
+		"X-RapidAPI-Host": "yh-finance.p.rapidapi.com"
 	}
 };
 
 $.ajax(settings).done(function (response) {
-	console.log(response);
+	const titlesOfTab = ["Data", "Value", "Name", "Entlty", "Role", "Shares", "Max Price"];
+    createTab(titlesOfTab, response.insiderTransactions.transactions);
 });
 
 // Show statistic
@@ -63,10 +64,39 @@ window.onload = function () {
     $("#chartContainer").CanvasJSChart(options);
     }
 
-    // Tabs 
+// Tabs 
 
-    $(document).ready(function () {
-        $('#example').DataTable({
-            order: [[3, 'desc']],
-        });
+const createTab = (headData, bodyData) => {
+
+    $("body").append(`
+        <table id="tabWidthData" class="display" style="width:100%">
+            <thead><tr id="headOfTab"></tr></thead>
+            <tbody id="bodyOfTab"></tbody>
+        </table>
+    `);
+    
+    // create tab head
+    $.each(headData, function(index, data) {
+        $("#headOfTab").append(`<th>${data}</th>`)
     });
+        
+    // create tab body
+    $.each(bodyData, function(index, data) {
+        console.log(data);
+        const newRow = $(`<tr>${data.filerName}</tr>`);
+        $("<td></td>").html(data.startDate.fmt).appendTo(newRow);
+        $("<td></td>").html(data.value ? data.value.longFmt : "Haven`t info").appendTo(newRow);
+        $("<td></td>").html(data.filerName).appendTo(newRow);
+        $("<td></td>").html("Haven`t info").appendTo(newRow);
+        $("<td></td>").html("Haven`t info").appendTo(newRow);
+        $("<td></td>").html(data.shares.longFmt).appendTo(newRow);
+        $("<td></td>").html("Haven`t info").appendTo(newRow);
+
+        newRow.appendTo("#bodyOfTab")
+    });
+    
+    $('#tabWidthData').DataTable({
+        order: [[3, 'desc']],
+    });
+
+}
