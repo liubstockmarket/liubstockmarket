@@ -12,10 +12,42 @@ const settings = {
 };
 
 $.ajax(settings).done(function (response) {
-    console.log(response.insiderTransactions.transactions);
+    const defaultDataWay = response.insiderTransactions.transactions;
+
+    const allElements = [];
+    const allValueOfCompany = [];
+
+    for (let i=0; i<defaultDataWay.length; i++) {
+        const element = {
+            "data": defaultDataWay[i].startDate.fmt,
+            "value": defaultDataWay[i].value ? defaultDataWay[i].value.raw : "Haven`t info",
+            "name": defaultDataWay[i].filerName,
+            "entlty": "Haven`t info",
+            "role": defaultDataWay[i].filerRelation,
+            "shares": defaultDataWay[i].shares.raw,
+            "transitionText": defaultDataWay[i].transactionText ? defaultDataWay[i].transactionText : "Haven`t info",
+            "maxPrice": "Haven`t info",
+        }
+
+        allElements.push(element);
+        allValueOfCompany.push({"name": element.name, "share": allElements[i].shares});
+    }
+
+    const newArrayOfObjects = 
+    allValueOfCompany.reduce((accumulator, object) => {
+      if(objectFound = accumulator.find(arrItem => (arrItem.name === object.name))) {
+          objectFound.share += object.share;
+      } else {
+          accumulator.push(object);
+      }
+      return accumulator;
+    }, []);
+  
+     console.log(newArrayOfObjects)
+      
 	const titlesOfTab = ["Date", "Value", "Name", "Entlty", "Role", "Shares", "Transition text", "Max Price"];
-    createTab(titlesOfTab, response.insiderTransactions.transactions);
-    cheateStatistic(3, 5, 5, 9)
+    createTab(titlesOfTab, defaultDataWay);
+    cheateStatistic(3, 5, 5, 9);
 });
 
 // Show statistic
@@ -93,5 +125,4 @@ const createTab = (tabHead, tabBody) => {
     });
     
     $('#tabWidthData').DataTable();
-
 }
