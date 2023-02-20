@@ -1,3 +1,5 @@
+const titlesOfTab = ["Date", "Value", "Name", "Role", "Shares", "Transition text"];
+
 // Get API
 
 const settings = {
@@ -6,54 +8,85 @@ const settings = {
 	"url": "https://yh-finance.p.rapidapi.com/stock/v2/get-insider-transactions?symbol=AMRN&region=US",
 	"method": "GET",
 	"headers": {
-		"X-RapidAPI-Key": "8dac42bdd2msh379cce62947963ep14d497jsn911506204ebc",
+		"X-RapidAPI-Key": "d375ea9c64mshe845eb2bbf97628p100f53jsnaf425ee2c250",
 		"X-RapidAPI-Host": "yh-finance.p.rapidapi.com"
 	}
 };
 
 $.ajax(settings).done(function (response) {
+    
+    // Sort data
     const defaultDataWay = response.insiderTransactions.transactions;
 
-    const allElements = [];
-    const allValueOfCompany = [];
+    const allElements = []
 
     for (let i=0; i<defaultDataWay.length; i++) {
         const element = {
             "data": defaultDataWay[i].startDate.fmt,
             "value": defaultDataWay[i].value ? defaultDataWay[i].value.raw : "Haven`t info",
             "name": defaultDataWay[i].filerName,
-            "entlty": "Haven`t info",
             "role": defaultDataWay[i].filerRelation,
             "shares": defaultDataWay[i].shares.raw,
-            "transitionText": defaultDataWay[i].transactionText ? defaultDataWay[i].transactionText : "Haven`t info",
-            "maxPrice": "Haven`t info",
+            "transactionText": defaultDataWay[i].transactionText ? defaultDataWay[i].transactionText : "Haven`t info",
         }
 
         allElements.push(element);
-        allValueOfCompany.push({"name": element.name, "share": allElements[i].shares});
     }
 
-    const newArrayOfObjects = 
-    allValueOfCompany.reduce((accumulator, object) => {
-      if(objectFound = accumulator.find(arrItem => (arrItem.name === object.name))) {
-          objectFound.share += object.share;
+    const allNames = [];
+    let final = [];
+
+    allElements.forEach((e) => {
+      let match = false;
+
+      final.forEach((i) => {
+        if (e.name == i.name) match = true;
+      });
+
+      if (!match) {
+        let obj = {
+          name: e.name,
+          values: [e],
+        }
+        allNames.push(e.name);
+        final.push(obj);
       } else {
-          accumulator.push(object);
+        final.forEach((i) => {
+          if (e.name == i.name) i.values.push(e);
+        });
       }
-      return accumulator;
-    }, []);
-  
-     console.log(newArrayOfObjects)
+    });
+
+    console.log(final);
+
+    generateDropBox(final, allNames);
       
-	const titlesOfTab = ["Date", "Value", "Name", "Entlty", "Role", "Shares", "Transition text", "Max Price"];
-    createTab(titlesOfTab, defaultDataWay);
+    // Call functions for gerenration statistic and table
+    createTab(titlesOfTab, final[0].values);
     cheateStatistic(3, 5, 5, 9);
 });
+
+// DropBox
+
+const generateDropBox = (allData, allNames) => {
+    let test;
+    allNames.map((item) => {
+        $("#companyNames").append(`<option value='volvo'>${item}</option>`);
+    });
+
+    $("#companyNames").click(() => {
+        const conceptName = $('#companyNames').find(":selected").text();
+
+        allData.map((company) => {
+            if(company.name===conceptName) createTab(titlesOfTab, company.values);
+        })
+    });
+}
 
 // Show statistic
 
 const cheateStatistic = (line1, line2, line3, line4) => {
-    var options = {
+    let options = {
         animationEnabled: true,
         title: {
             text: "Insider Trading Volume",                
@@ -97,6 +130,8 @@ const cheateStatistic = (line1, line2, line3, line4) => {
 
 const createTab = (tabHead, tabBody) => {
 
+    $("#tabWidthData_wrapper").remove();
+
     $("body").append(`
         <table id="tabWidthData" class="display" style="width:100%">
             <thead><tr id="headOfTab"></tr></thead>
@@ -112,14 +147,12 @@ const createTab = (tabHead, tabBody) => {
     // create tab body
     $.each(tabBody, function(index, data) {
         const newRow = $(`<tr>${data.filerName}</tr>`);
-        $("<td></td>").html(data.startDate.fmt).appendTo(newRow); // date
-        $("<td></td>").html(data.value ? data.value.longFmt : "Haven`t info").appendTo(newRow); // value 
-        $("<td></td>").html(data.filerName).appendTo(newRow); // name
-        $("<td></td>").html("Haven`t info").appendTo(newRow); // entlty
-        $("<td></td>").html(data.filerRelation).appendTo(newRow); // role
-        $("<td></td>").html(data.shares.longFmt).appendTo(newRow); // shares
+        $("<td></td>").html(data.data).appendTo(newRow); // date
+        $("<td></td>").html(data.value ? data.value : "Haven`t info").appendTo(newRow); // value 
+        $("<td></td>").html(data.name).appendTo(newRow); // name
+        $("<td></td>").html(data.role).appendTo(newRow); // role
+        $("<td></td>").html(data.shares).appendTo(newRow); // shares
         $("<td></td>").html(data.transactionText ? data.transactionText : "Haven`t info").appendTo(newRow); // transition text
-        $("<td></td>").html("Haven`t info").appendTo(newRow); // max price
 
         newRow.appendTo("#bodyOfTab")
     });
