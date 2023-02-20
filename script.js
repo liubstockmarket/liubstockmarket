@@ -36,6 +36,7 @@ $.ajax(settings).done(function (response) {
     const allNames = [];
     let final = [];
 
+
     allElements.forEach((e) => {
       let match = false;
 
@@ -47,22 +48,25 @@ $.ajax(settings).done(function (response) {
         let obj = {
           name: e.name,
           values: [e],
+          allShares: e.shares
         }
         allNames.push(e.name);
         final.push(obj);
       } else {
         final.forEach((i) => {
-          if (e.name == i.name) i.values.push(e);
+          if (e.name == i.name) {
+            i.values.push(e);
+            i.allShares += e.shares
+          }
         });
       }
     });
-
-    console.log(final);
 
     generateDropBox(final, allNames);
       
     // Call functions for gerenration statistic and table
     createTab(titlesOfTab, final[0].values);
+    $("#allShares").html(`All shares: ${final[0].allShares}`);
     cheateStatistic(3, 5, 5, 9);
 });
 
@@ -78,7 +82,10 @@ const generateDropBox = (allData, allNames) => {
         const conceptName = $('#companyNames').find(":selected").text();
 
         allData.map((company) => {
-            if(company.name===conceptName) createTab(titlesOfTab, company.values);
+            if(company.name===conceptName) {
+                createTab(titlesOfTab, company.values);
+                $("#allShares").html(`All shares: ${company.allShares}`)
+            }
         })
     });
 }
