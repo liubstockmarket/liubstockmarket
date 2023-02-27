@@ -1,92 +1,56 @@
 const titlesOfTab = ["Date", "Value", "Name", "Role", "Shares", "Transition text"];
 
-// Get API
+// Get list of companies
 
-const settings = {
-	"async": true,
-	"crossDomain": true,
-	"url": "https://yh-finance.p.rapidapi.com/stock/v2/get-insider-transactions?symbol=AMRN&region=US",
-	"method": "GET",
-	"headers": {
-		"X-RapidAPI-Key": "d375ea9c64mshe845eb2bbf97628p100f53jsnaf425ee2c250",
-		"X-RapidAPI-Host": "yh-finance.p.rapidapi.com"
-	}
-};
-
-$.ajax(settings).done(function (response) {
+$("#searchCompany").on('input', (event) => {
+    const searchData = event.target.value;
+    if(searchData <= 1) return;
     
-    // Sort data
-    const defaultDataWay = response.insiderTransactions.transactions;
-
-    const allElements = []
-
-    for (let i=0; i<defaultDataWay.length; i++) {
-        const element = {
-            "data": defaultDataWay[i].startDate.fmt,
-            "value": defaultDataWay[i].value ? defaultDataWay[i].value.raw : "Haven`t info",
-            "name": defaultDataWay[i].filerName,
-            "role": defaultDataWay[i].filerRelation,
-            "shares": defaultDataWay[i].shares.raw,
-            "transactionText": defaultDataWay[i].transactionText ? defaultDataWay[i].transactionText : "Haven`t info",
+    const settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": `https://yh-finance.p.rapidapi.com/auto-complete?q=${searchData}&region=US`,
+        "method": "GET",
+        "headers": {
+            "X-RapidAPI-Key": "d375ea9c64mshe845eb2bbf97628p100f53jsnaf425ee2c250",
+            "X-RapidAPI-Host": "yh-finance.p.rapidapi.com"
         }
+    };
 
-        allElements.push(element);
-    }
+    $.ajax(settings).done(function (response) {
+        $("#listOfCompany").empty();
 
-    const allNames = [];
-    let final = [];
-
-
-    allElements.forEach((e) => {
-      let match = false;
-
-      final.forEach((i) => {
-        if (e.name == i.name) match = true;
-      });
-
-      if (!match) {
-        let obj = {
-          name: e.name,
-          values: [e],
-          allShares: e.shares
-        }
-        allNames.push(e.name);
-        final.push(obj);
-      } else {
-        final.forEach((i) => {
-          if (e.name == i.name) {
-            i.values.push(e);
-            i.allShares += e.shares
-          }
+        response.quotes.map((item) => {
+            $("#listOfCompany").append(`<p class="companyName" date-symbol="${item.symbol}">${item.shortname}</p>`);
         });
-      }
-    });
 
-    generateDropBox(final, allNames);
-      
-    // Call functions for gerenration statistic and table
-    createTab(titlesOfTab, final[0].values);
-    $("#allShares").html(`All shares: ${final[0].allShares}`);
-    cheateStatistic(3, 5, 5, 9);
+        getCompanyData();
+    });
 });
 
-// DropBox
+// Get company data
 
-const generateDropBox = (allData, allNames) => {
-    let test;
-    allNames.map((item) => {
-        $("#companyNames").append(`<option value='volvo'>${item}</option>`);
-    });
+const getCompanyData = () => {
 
-    $("#companyNames").click(() => {
-        const conceptName = $('#companyNames').find(":selected").text();
-
-        allData.map((company) => {
-            if(company.name===conceptName) {
-                createTab(titlesOfTab, company.values);
-                $("#allShares").html(`All shares: ${company.allShares}`)
+    $(".companyName").click((event) => {
+        const companyExchange = $(event.target).attr("date-symbol");
+    
+        const getCompany = {
+            "async": true,
+            "crossDomain": true,
+            "url": `https://yh-finance.p.rapidapi.com/stock/v2/get-insider-transactions?symbol=${companyExchange}&region=US`,
+            "method": "GET",
+            "headers": {
+                "X-RapidAPI-Key": "d375ea9c64mshe845eb2bbf97628p100f53jsnaf425ee2c250",
+                "X-RapidAPI-Host": "yh-finance.p.rapidapi.com"
             }
-        })
+        };
+
+        $.ajax(getCompany).done(function (response) {
+            createTab(titlesOfTab, response.insiderTransactions.transactions);
+        });
+
+        $("#listOfCompany").empty();
     });
 }
 
@@ -154,11 +118,11 @@ const createTab = (tabHead, tabBody) => {
     // create tab body
     $.each(tabBody, function(index, data) {
         const newRow = $(`<tr>${data.filerName}</tr>`);
-        $("<td></td>").html(data.data).appendTo(newRow); // date
-        $("<td></td>").html(data.value ? data.value : "Haven`t info").appendTo(newRow); // value 
-        $("<td></td>").html(data.name).appendTo(newRow); // name
-        $("<td></td>").html(data.role).appendTo(newRow); // role
-        $("<td></td>").html(data.shares).appendTo(newRow); // shares
+        $("<td></td>").html(data.startDate.fmt).appendTo(newRow); // date
+        $("<td></td>").html(data.value ? data.value.longFmt : "Haven`t info").appendTo(newRow); // value 
+        $("<td></td>").html(data.filerName).appendTo(newRow); // name
+        $("<td></td>").html(data.filerRelation).appendTo(newRow); // role
+        $("<td></td>").html(data.shares.longFmt).appendTo(newRow); // shares
         $("<td></td>").html(data.transactionText ? data.transactionText : "Haven`t info").appendTo(newRow); // transition text
 
         newRow.appendTo("#bodyOfTab")

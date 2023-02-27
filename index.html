@@ -9,11 +9,16 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
 </head>
 <body>
-    
-    <div id="chartContainer" style="height: 300px; width: 100%;"></div>
 
-    <select id="companyNames"></select>
-    <h3 id="allShares">All shares:</h3>
+
+    <form autocomplete="off">
+            <label for="searchCompany">Search company:</label>
+            <input type="text" id="searchCompany" name="searchCompany" style="display: block">
+
+            <div id="listOfCompany"></div>
+    </form>
+
+    <!-- <div id="chartContainer" style="height: 300px; width: 100%;"></div> -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.min.js"></script>
