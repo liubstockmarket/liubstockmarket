@@ -12,7 +12,7 @@ $("#searchCompany").on('input', (event) => {
         "url": `https://yh-finance.p.rapidapi.com/auto-complete?q=${searchData}&region=US`,
         "method": "GET",
         "headers": {
-            "X-RapidAPI-Key": "d375ea9c64mshe845eb2bbf97628p100f53jsnaf425ee2c250",
+            "X-RapidAPI-Key": "9f7967c1fbmsh96ce5ac95f356ebp1c2470jsndd8798773eb5",
             "X-RapidAPI-Host": "yh-finance.p.rapidapi.com"
         }
     };
@@ -41,7 +41,7 @@ const getCompanyData = () => {
             "url": `https://yh-finance.p.rapidapi.com/stock/v2/get-insider-transactions?symbol=${companyExchange}&region=US`,
             "method": "GET",
             "headers": {
-                "X-RapidAPI-Key": "d375ea9c64mshe845eb2bbf97628p100f53jsnaf425ee2c250",
+                "X-RapidAPI-Key": "9f7967c1fbmsh96ce5ac95f356ebp1c2470jsndd8798773eb5",
                 "X-RapidAPI-Host": "yh-finance.p.rapidapi.com"
             }
         };
