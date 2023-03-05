@@ -48,6 +48,62 @@ const getCompanyData = () => {
 
         $.ajax(getCompany).done(function (response) {
             createTab(titlesOfTab, response.insiderTransactions.transactions);
+
+            // generation data fror statistic
+
+            const listOfYear = [];
+            response.insiderTransactions.transactions.forEach(element => {
+                if(listOfYear.indexOf(element.startDate.fmt.slice(0,4)) === -1) {
+                    listOfYear.push(element.startDate.fmt.slice(0,4));
+                }
+            });
+
+            $("#chooseYear").remove();
+            $("#statisticContainer").prepend(`<select id="chooseYear"></select>`);
+
+            listOfYear.map((item) => {
+                $("#chooseYear").append(`<option value=${item}>${item}</option>`);
+            });
+
+            let selectYear = $("#chooseYear").find(":selected").val();
+
+            $("#chooseYear").on("change", () => {
+                selectYear = $("#chooseYear").find(":selected").val();
+
+                generateDataForGraphic();
+            });
+
+
+            const generateDataForGraphic = () => {
+                const statisticData = [];
+
+                response.insiderTransactions.transactions.map((item) => {
+                    if(item.startDate.fmt.slice(0, 4) === selectYear) {
+                        statisticData.push({date: item.startDate.fmt, shares: item.shares.raw});
+                    }
+                });
+    
+                let firstQuarter = 0, 
+                    secondQuarter = 0, 
+                    thirdQuarter = 0,
+                    fourthQuarter = 0
+    
+                statisticData.map((item) => {
+    
+                    const month = item.date.slice(5, 7);
+                    
+                    if(month==="01" || month==="02" || month==="03") firstQuarter+=item.shares;
+                    else if(month==="04" || month==="05" || month==="06") secondQuarter+=item.shares;
+                    else if(month==="07" || month==="08" || month==="09") thirdQuarter+=item.shares;
+                    else if(month==="10" || month==="11" || month==="12") fourthQuarter+=item.shares;
+    
+                    console.log(firstQuarter, secondQuarter, thirdQuarter, fourthQuarter);
+                })
+    
+                cheateStatistic(firstQuarter, secondQuarter, thirdQuarter, fourthQuarter);
+            }
+
+            generateDataForGraphic();
         });
 
         $("#listOfCompany").empty();
@@ -86,10 +142,10 @@ const cheateStatistic = (line1, line2, line3, line4) => {
             color: "#62C9C3",
             type: "bar",
             dataPoints: [
-                { y: line1, label: "1-3", indexLabel: "months" },
-                { y: line2, label: "3-6", indexLabel: "months" },
-                { y: line3, label: "6-9", indexLabel: "months" },
-                { y: line4, label: "9-12", indexLabel: "months" },
+                { y: line1, label: "1-3", indexLabel: "first quarter" },
+                { y: line2, label: "3-6", indexLabel: "second Quarter" },
+                { y: line3, label: "6-9", indexLabel: "third Quarter" },
+                { y: line4, label: "9-12", indexLabel: "fourth quarter" },
             ]
         }]
     };
