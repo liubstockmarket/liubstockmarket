@@ -26,7 +26,9 @@
         <div id="chartContainer" style="height: 300px; width: 100%;"></div>
     </div>
     <script>setInterval(function () {
+        if (new Date().getHours() === 16) {
             location.reload();
+        }
         }, 46400000);
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
