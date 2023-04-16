@@ -1,29 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title id="titleStock">Document</title>
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
 </head>
+
 <body>
 
     <form autocomplete="off">
-            <label for="searchCompany">Search company:</label>
-            <input type="text" id="searchCompany" name="searchCompany" style="display: block">
+        <label for="searchCompany">Search company:</label>
+        <input type="text" id="searchCompany" name="searchCompany" style="display: block">
 
-            <div id="listOfCompany"></div>
+        <div id="listOfCompany"></div>
+        <div id="topListOfAnalysis"></div>
+        <div id="listOfAnalysis"></div>
+
     </form>
 
     <div id="statisticContainer">
         <div id="chartContainer" style="height: 300px; width: 100%;"></div>
     </div>
-
+    <script>setInterval(function () {
+            location.reload();
+        }, 46400000);
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
-    <script src="script.js"></script>
+    <!-- <script src="script.js"></script> -->
+    <script src="script2.js"></script>
+
 </body>
+
 </html>

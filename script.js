@@ -26,6 +26,8 @@ $("#searchCompany").on('input', (event) => {
 
         getCompanyData();
     });
+
+    $.ajax()
 });
 
 // Get company data
@@ -47,7 +49,7 @@ const getCompanyData = () => {
         };
 
         $.ajax(getCompany).done(function (response) {
-            createTab(titlesOfTab, response.insiderTransactions.transactions);
+            createTabWithInsiderTransactions(titlesOfTab, response.insiderTransactions.transactions);
 
             // generation data fror statistic
 
@@ -155,7 +157,7 @@ const cheateStatistic = (line1, line2, line3, line4) => {
 
 // Tabs 
 
-const createTab = (tabHead, tabBody) => {
+const createTabWithInsiderTransactions = (tabHead, tabBody) => {
 
     $("#tabWidthData_wrapper").remove();
 
