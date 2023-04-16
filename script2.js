@@ -26,9 +26,9 @@ function settings(companyExchange) {
     $.ajax(settings(element)).done(function (response) {
         //$("#listOfAnalysis").empty();
     console.log(response);
-        response.quoteSummary.result[0].upgradeDowngradeHistory.history.slice(0, 10).map((item, ind) => {
+        response.quoteSummary.result[0].upgradeDowngradeHistory.history.slice(0, 3).map((item, ind) => {
             const date = new Date(item.epochGradeDate * 1000);
-            if (ind <= 3) {
+            if (ind < 1) {
                 //$("#titleStock").text = 'dddd';
                 if (isToday(date)) {
                     //alert(element);
